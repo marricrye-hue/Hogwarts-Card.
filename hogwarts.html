@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Letter from Hogwarts</title>
+<style>
+:root{--gold:#c6a45b;--ink:#2b1b13}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:#f4ead5;font-family:Georgia,"Times New Roman",serif;background:radial-gradient(ellipse at 50% 25%,rgba(111,78,42,.32),transparent 48%),linear-gradient(135deg,#0b1019,#1c1b25 55%,#090d14);display:grid;place-items:center;padding:24px;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.24;background-image:radial-gradient(#d9bd79 1px,transparent 1.5px);background-size:47px 53px;animation:stars 12s linear infinite}
+@keyframes stars{to{transform:translateY(53px)}}
+.wrap{width:min(100%,680px);position:relative;z-index:1}
+.crest{text-align:center;margin-bottom:20px;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;font-size:.78rem}
+.symbol{display:block;font-size:2.6rem;margin-bottom:7px}
+.panel{border:1px solid rgba(198,164,91,.6);background:linear-gradient(145deg,rgba(28,29,37,.96),rgba(12,16,24,.97));box-shadow:0 22px 70px rgba(0,0,0,.55),inset 0 0 35px rgba(198,164,91,.05);border-radius:8px;padding:clamp(24px,6vw,48px)}
+h1{text-align:center;color:#e4c77f;font-weight:normal;font-size:clamp(1.8rem,6vw,2.7rem);margin:0 0 10px}
+.subtitle{text-align:center;color:#c9b995;line-height:1.6;margin:0 auto 28px;max-width:430px}
+label{display:block;color:#e5d5b5;margin-bottom:9px}
+input{width:100%;padding:14px 15px;border-radius:4px;border:1px solid #9d814b;background:#11151d;color:#fff3d6;font:1rem Georgia,serif;outline:none}
+input:focus{border-color:#e2c477;box-shadow:0 0 0 3px rgba(198,164,91,.14)}
+button{display:block;width:100%;margin-top:17px;padding:14px;border:1px solid #d3b66e;border-radius:4px;cursor:pointer;background:linear-gradient(#c5a45f,#98743b);color:#21170d;font:bold 1rem Georgia,serif;letter-spacing:.04em}
+button:hover{filter:brightness(1.12)}
+.error{min-height:22px;margin:13px 0 0;text-align:center;color:#e6a0a0;font-size:.92rem}
+.hidden{display:none!important}
+.letter-stage{perspective:1000px;margin:4px auto 24px;width:min(100%,420px)}
+.envelope{position:relative;height:220px;background:#8c6338;border:1px solid #c7a46a;border-radius:5px;box-shadow:0 14px 35px rgba(0,0,0,.35);overflow:hidden}
+.flap{position:absolute;top:0;left:0;width:0;height:0;border-left:209px solid transparent;border-right:209px solid transparent;border-top:135px solid #b58a50;transform-origin:top;transition:transform 1s ease;z-index:3}
+.seal{position:absolute;z-index:4;top:92px;left:50%;transform:translateX(-50%);width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:#f2d995;font-size:1.35rem;background:radial-gradient(circle at 35% 30%,#9e3432,#5d171d 72%);border:2px solid #d5b66f;box-shadow:0 3px 9px #40201a;transition:opacity .4s}
+.envelope.open .flap{transform:rotateX(180deg)}
+.envelope.open .seal{opacity:0}
+.letter{position:relative;background:repeating-linear-gradient(0deg,transparent 0 31px,rgba(102,72,38,.06) 32px),#e9d7aa;color:var(--ink);border:1px solid #b18d54;border-radius:3px;padding:clamp(24px,6vw,46px);box-shadow:0 16px 45px rgba(0,0,0,.4);transform:translateY(25px);opacity:0;max-height:0;overflow:hidden;transition:max-height 1s ease,opacity .8s ease,transform .8s ease}
+.letter.show{
+    max-height:none;
+    overflow:visible;
+    opacity:1;
+    transform:translateY(0);
+}
+.letter-top{text-align:center;border-bottom:1px solid rgba(78,52,25,.35);padding-bottom:18px;margin-bottom:22px}
+.crest-mini{font-size:1.8rem}
+.letter-top h2{font-weight:normal;font-size:1.55rem;margin:7px 0 4px;letter-spacing:.06em}
+.letter-top p{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;margin:0}
+#message{white-space:pre-wrap;font-size:1.08rem;line-height:1.9;min-height:100px}
+.hint{text-align:center;color:#c9b995;font-size:.82rem;margin-top:22px}
+.outro-message{white-space:pre-wrap;text-align:center;color:#e7d9bb;line-height:1.9;font-size:1.08rem;margin:24px auto;max-width:490px}
+#nextButton,#endMessage{max-width:100%}
+@media(max-width:460px){.flap{border-left-width:50vw;border-right-width:50vw}.envelope{height:190px}.seal{top:85px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="crest"><span class="symbol">✦</span>Hogwarts School of Witchcraft and Wizardry</div>
+
+  <section class="panel" id="gate">
+    <h1>A Letter Awaits</h1>
+    <p class="subtitle">Some letters are meant for only one person. Enter the name written for the recipient to continue.</p>
+    <form id="nameForm">
+      <label for="recipient">Your name</label>
+      <input id="recipient" type="text" placeholder="Enter your name..." autocomplete="off" required>
+      <button type="submit">Unlock the letter</button>
+      <p class="error" id="error" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="panel hidden" id="reveal">
+    <h1>Delivered by Rye</h1>
+    <p class="subtitle">A sealed letter, addressed to you Kaye!!.</p>
+
+    <div class="letter-stage">
+      <div class="envelope" id="envelope">
+        <div class="flap"></div>
+        <div class="seal">H</div>
+      </div>
+    </div>
+
+    <button id="openLetter" type="button">Open your letter</button>
+
+    <article class="letter" id="letter">
+      <header class="letter-top">
+        <div class="crest-mini">✦</div>
+        <h2>Hogwarts</h2>
+        <p>By Rye WAZAAH · Private Correspondence</p>
+      </header>
+      <div id="message">Okay so, there's a lot of things I never really got to say, feelings that I've kept to myself. Ky, I've actually started developing feelings for you since the 3rd week we've been talking. There are a lot of things I like about you, one of them is the way you laugh and smile, how you genuinely care for others even though Hindi mo Ka close, and how you're still such an incredible person despite sa Lahat ng pinagdaanan mo.
+
+You know, you've also become one of my inspirations, or let's say motivations to do better in life huhu. Back then in 1st semester, Grade 12 I was a bit lazy hehe but after meeting you. I found myself becoming more motivated to improve and focus on my hobbies. You've somehow inspired me to become more productive and pursue the things I usually enjoy. That's something I'm really thankful for because, in a way, meeting you has encouraged me to work towards becoming a better version of myself. 
+
+
+And even if things don't turn out the way I might've hoped, I'll still keep improving and do better in life. Also after hearing about your experiences and all the things na pinagdaanan moo, I couldn't help but admire how strong of a person you are. It was honestly one of the reasons I started liking you. I was like, "woah, bro what dami mong pinagdaanan but despite that you still manage to be jolly and happy??" Knowing that, despite everything you still wanted to focus on loving yourself, it made me decide that I'd rather just stay friends with you. But I guess my feelings got the better of me since I'm a bit stupid aaaaaakalddjds.
+
+Anyways, I want you to know that you're still a precious friend to me. You're of the people I genuinely enjoy talking to kaya, especially na we have a lot in common, whether it's our experiences or even our personalities. I never really planned on catching feelings, and I guess it happened naturally yk. Sometimes inisip ko nalang what if I hadn't developed these feelings, wouldn't we be good friends without any complications. But well, I can't really help how I feel brobro.
+
+And I just wanna say that I'll continue admiring you from afar nalang and I genuinely wish you nothing but happiness and joy in life. Keep staying strong as you always have ah and you have you're friend na which is really good. Thank you for existing Ky and yk making my days full of butterflies even if it was for a short moment, still precious to me aaaa. I wish you nothing but best in life bro bro on whatever you pursue kahit coding pa Yan HAHAHHA. Anyways even if you don't feel the same which is given already but I'll still support you and wish you the best ky, while I let these feelings slowly fade away.
+
+Looks like madami nako nasabi gosh lolol, with all that said, I'll take a step back na since I understand that you're focusing on yourself, especially self love and your academics. I don't want my feelings to become something that makes things uncomfortable for you or gets in the way of what you're currently prioritizing.
+
+Thank you Kaye, I genuinely wish you the best.
+
+Respectfully, 
+Your bro bro Rye.</div>
+    </article>
+
+    <p class="hint">A little piece of magic, written just for you Kaye.</p>
+    <button id="nextButton" class="hidden" type="button">Next</button>
+  </section>
+
+  <section class="panel hidden" id="outro">
+    <h1>Until We Meet Again(?)</h1>
+    <p class="subtitle">See you kaye.</p>
+    <div class="outro-message" id="outroMessage">Well kinda hope you can keep this to yourself oum.</div>
+    <button id="endMessage" type="button">End Message</button>
+  </section>
+</main>
+
+<script>
+const acceptedNames = new Set(["Kaye Ced", "kaye ced", "Ky", "ky", "KY"]);
+
+document.getElementById("nameForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const enteredName = document.getElementById("recipient").value.trim();
+  const error = document.getElementById("error");
+
+  if (acceptedNames.has(enteredName)) {
+    document.getElementById("gate").classList.add("hidden");
+    document.getElementById("reveal").classList.remove("hidden");
+  } else {
+    error.textContent = "This letter is not addressed to that name.";
+  }
+});
+
+document.getElementById("openLetter").addEventListener("click", function() {
+  document.getElementById("envelope").classList.add("open");
+  this.disabled = true;
+  this.textContent = "The letter is opening...";
+
+  setTimeout(() => {
+    document.getElementById("letter").classList.add("show");
+    this.classList.add("hidden");
+    document.getElementById("nextButton").classList.remove("hidden");
+    document.getElementById("letter").scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+  }, 850);
+});
+
+document.getElementById("nextButton").addEventListener("click", function() {
+  document.getElementById("reveal").classList.add("hidden");
+  document.getElementById("outro").classList.remove("hidden");
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+
+document.getElementById("endMessage").addEventListener("click", function() {
+  document.getElementById("outro").classList.add("hidden");
+  document.getElementById("gate").classList.remove("hidden");
+
+  document.getElementById("recipient").value = "";
+  document.getElementById("error").textContent = "";
+
+  document.getElementById("envelope").classList.remove("open");
+  document.getElementById("letter").classList.remove("show");
+
+  const openButton = document.getElementById("openLetter");
+  openButton.disabled = false;
+  openButton.textContent = "Open your letter";
+  openButton.classList.remove("hidden");
+
+  document.getElementById("nextButton").classList.add("hidden");
+
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+</script>
+</body>
+</html>
